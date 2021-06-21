@@ -33,6 +33,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
+// creates new user
 router.post('/', (req, res) => {
   // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
   User.create({
@@ -47,11 +48,39 @@ router.post('/', (req, res) => {
     });
 });
 
+//queries for user email for login
+router.post('/login', (req, res) => {
+  // expects {email: 'lernantino@gmail.com', password: 'password1234'}
+    User.findOne({
+      where: {
+        email: req.body.email
+      }
+    }).then(dbUserData => {
+      if (!dbUserData) {
+        res.status(400).json({ message: 'No user with that email address!' });
+        return;
+      }
+   
+      // Verify user
+      const validPassword = dbUserData.checkPassword(req.body.password);
+// cond statement to inform user of verification (aka login) status
+      if (!validPassword) {
+        res.status(400).json({ message: 'Incorrect password!' });
+        return;
+      }
+      
+      res.json({ user: dbUserData, message: 'You are now logged in!' });
+    });  
+  });
+
+})
+
 router.put('/:id', (req, res) => {
   // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
 
   // pass in req.body instead to only update what's passed through
   User.update(req.body, {
+    individualHooks: true,
     where: {
       id: req.params.id
     }
