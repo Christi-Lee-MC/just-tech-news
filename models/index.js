@@ -32,11 +32,11 @@ Vote.belongsTo(Post, {
     foreignKey: 'post_id'
 });
 
-User.hasMany(Cote, {
+User.hasMany(Vote, {
     foreignKey: 'user_id'
 });
 
-Post.hasMany(Cote, {
+Post.hasMany(Vote, {
     foreignKey: 'post_id'
 });
 
